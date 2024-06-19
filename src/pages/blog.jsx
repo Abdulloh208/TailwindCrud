@@ -16,7 +16,7 @@ const Blog = () => {
     useEffect(() => {
         const dataBase = collection(db, 'blogs');
 
-        const unsubscribe = onSnapshot(dataBase, (snapshot) => {
+        onSnapshot(dataBase, (snapshot) => {
             const malumot = snapshot.docs.map((doc) => ({
                 ...doc.data(),
                 id: doc.id,
