@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 import { notification } from 'antd';
+import { async } from "@firebase/util";
 
 const Blog = () => {
     const [blog, setBlog] = useState([]);
@@ -23,7 +24,7 @@ const Blog = () => {
             setBlog(malumot);
         });
 
-        return () => unsubscribe();
+        return () => unsubscribe(); 
     }, []);
 
     const database = collection(db, "blogs");
@@ -63,19 +64,18 @@ const Blog = () => {
         await deleteDoc(deletePost);
     };
 
-    const cartEdit = async (img, descript, title, id) => {
-        setImg(img);
-        setDescript(descript);
-        setTitle(title);
+    const HandleEdit = async (id, title, descript, img) => {
         setId(id);
-        setShow(false);
-    };
+        setTitle(title);
+        setDescript(descript);
+        setImg(img);
+        setShow(false)
+    }
 
-    const cartUpdate = async () => {
-        const updateData = doc(db, 'blogs', id);
-        await updateDoc(updateData, { img, descript, title });
-    };
-
+    const HandleUptade = async () => {
+        const uptadeData = doc(db, 'blogs', id);
+        await updateDoc(uptadeData, { title, descript, img }); 
+    }
 
     return (
         <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
@@ -97,13 +97,13 @@ const Blog = () => {
                             <input type="text" id="img" value={img} onChange={(e) => setImg(e.target.value)} className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                         </div>
                         <div className="flex justify-center">
-                            {show ? <button className="border rounded-lg px-6 py-3 mt-4 bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50" onClick={HandleCreate}>Create</button> : <button className="border rounded-lg px-6 py-3 mt-4 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onClick={cartUpdate}>Update</button>}
+                            {show ? <button className="border rounded-lg px-6 py-3 mt-4 bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50" onClick={HandleCreate}>Create</button> : <button className="border rounded-lg px-6 py-3 mt-4 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onClick={HandleUptade}>Update</button>}
                         </div>
                     </form>
                 </div>
             </div>
             <div className="mt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-4 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     {blog.map((data) => (
                         <div key={data.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-lg">
                             <img className="w-full h-56 object-cover object-center" src={data.img} alt="blog-img" />
@@ -112,7 +112,7 @@ const Blog = () => {
                                 <p className="text-gray-600 mb-4">{data.descript}</p>
                                 <div className="flex justify-between">
                                     <button className="border rounded-lg px-4 py-2 bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50" onClick={() => HandleDeleteCard(data.id)}>Delete</button>
-                                    <button className="border rounded-lg px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ml-2" onClick={() => cartEdit(data.img, data.descript, data.title, data.id)}>Edit</button>
+                                    <button className="border rounded-lg px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ml-2" onClick={() => HandleEdit(data.id, data.title, data.descript, data.img)}>Edit</button>
                                 </div>
                             </div>
                         </div>
